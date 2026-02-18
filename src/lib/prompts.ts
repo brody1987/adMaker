@@ -76,6 +76,12 @@ Spec: ${specInfo}
 Product Analysis:
 ${analysisResult}
 
+CRITICAL — PRODUCT IMAGE RULES:
+- The ATTACHED IMAGE is the original product photo — you MUST preserve it exactly as-is
+- Do NOT redraw, re-interpret, stylize, or modify the product appearance in any way
+- Place the original product image directly into the banner, maintaining its exact shape, color, texture, and proportions
+- The product must look IDENTICAL to the attached reference photo
+
 CRITICAL — TEXT RULES:
 - Do NOT render ANY text, letters, numbers, characters, or typography in the image
 - Do NOT include any copy, headlines, sub-headlines, badges, brand names, or labels
@@ -87,12 +93,11 @@ CRITICAL — TEXT RULES:
 
 Design Requirements:
 - Clean, professional advertising background style
-- Product should be prominently featured and faithful to the original product image
 - Use colors and gradients that complement the product
 - Follow Kakao Moment ad guidelines
 - ${adType === "bizboard" ? "Horizontal banner layout, product on the RIGHT side, clean background on the LEFT for text" : ""}
 - ${adType === "display" ? "Eye-catching display ad background with balanced composition, product prominently placed" : ""}
 - ${adType === "message" ? "Message-style ad background optimized for mobile viewing, product clearly visible" : ""}
 - Do NOT include any watermarks or AI attribution
-- Focus on beautiful background design and accurate product placement only`;
+- Focus on beautiful background design and EXACT product placement from the attached photo`;
 }

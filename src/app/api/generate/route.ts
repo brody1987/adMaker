@@ -97,7 +97,10 @@ export async function POST(request: NextRequest) {
       contents: [
         {
           role: "user",
-          parts: [{ text: fullPrompt }],
+          parts: [
+            { inlineData: { mimeType: imageMimeType, data: base64Data } },
+            { text: fullPrompt },
+          ],
         },
       ],
       config: {
