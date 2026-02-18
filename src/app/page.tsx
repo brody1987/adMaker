@@ -8,6 +8,7 @@ const AD_TYPES = [
     href: "/bizboard",
     specs: ["1029 × 258px", "오브젝트형", "썸네일형", "마스킹형"],
     icon: "📢",
+    previewImage: "/templates/bizboard-preview.svg",
   },
   {
     title: "디스플레이",
@@ -16,6 +17,7 @@ const AD_TYPES = [
     href: "/display",
     specs: ["2:1 (1200×600)", "1:1 (500×500)", "9:16 (720×1280)", "4:5 (800×1000)"],
     icon: "🖼️",
+    previewImage: "/templates/display-preview.svg",
   },
   {
     title: "메시지",
@@ -24,6 +26,7 @@ const AD_TYPES = [
     href: "/message",
     specs: ["와이드이미지", "와이드리스트", "캐러셀", "기본텍스트"],
     icon: "💬",
+    previewImage: "/templates/message-preview.svg",
   },
 ];
 
@@ -49,6 +52,7 @@ export default function Home() {
               href={adType.href}
               specs={adType.specs}
               icon={adType.icon}
+              previewImage={adType.previewImage}
             />
           ))}
         </div>
