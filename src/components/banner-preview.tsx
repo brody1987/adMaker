@@ -79,18 +79,7 @@ export function BannerPreview({
           brandName={textOverlay.brandName}
           adType={adType}
           subtype={subtype}
-          className="[&>div]:scale-[var(--preview-scale)] origin-top-left"
         />
-        <style>{`
-          .rounded-lg > div > div {
-            --preview-scale: 1;
-          }
-          @media (max-width: 768px) {
-            .rounded-lg > div > div {
-              --preview-scale: 0.5;
-            }
-          }
-        `}</style>
       </div>
 
       <div className="flex items-center gap-2 flex-wrap">

@@ -37,6 +37,21 @@ export function BannerDownload({
         useCORS: true,
         allowTaint: true,
         backgroundColor: null,
+        onclone: (_doc, clonedEl) => {
+          // Reset transform scale so html2canvas captures at full resolution
+          clonedEl.style.transform = "none";
+          // Strip Tailwind v4 oklch/lab colors that html2canvas can't parse
+          clonedEl.querySelectorAll("*").forEach((el) => {
+            const s = (el as HTMLElement).style;
+            const computed = window.getComputedStyle(el);
+            // Force inherit safe colors — only override if not already inline
+            if (!s.color) s.color = computed.color;
+            if (!s.backgroundColor && computed.backgroundColor !== "rgba(0, 0, 0, 0)") {
+              s.backgroundColor = computed.backgroundColor;
+            }
+            if (!s.borderColor) s.borderColor = computed.borderColor;
+          });
+        },
       });
 
       const mimeType = format === "jpg" ? "image/jpeg" : "image/png";

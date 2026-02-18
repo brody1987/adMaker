@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import type { AdType } from "@/types/ad";
 
 interface BannerCanvasProps {
@@ -190,24 +190,53 @@ export const BannerCanvas = forwardRef<HTMLDivElement, BannerCanvasProps>(
     },
     ref
   ) {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [scale, setScale] = useState(1);
+
     const src = backgroundImage.startsWith("data:")
       ? backgroundImage
       : `data:${mimeType};base64,${backgroundImage}`;
 
     const styles = getTextStyle(adType, subtype, width, height);
 
+    useEffect(() => {
+      const updateScale = () => {
+        const container = containerRef.current;
+        if (!container) return;
+        const parentWidth = container.parentElement?.clientWidth ?? width;
+        const newScale = Math.min(1, parentWidth / width);
+        setScale(newScale);
+      };
+
+      updateScale();
+      window.addEventListener("resize", updateScale);
+      return () => window.removeEventListener("resize", updateScale);
+    }, [width]);
+
     return (
-      <div className={className} style={{ width: "100%", overflow: "hidden" }}>
+      <div
+        ref={containerRef}
+        className={className}
+        style={{
+          width: "100%",
+          height: `${height * scale}px`,
+          overflow: "hidden",
+        }}
+      >
         <div
           ref={ref}
+          data-banner-canvas
           style={{
             position: "relative",
             width: `${width}px`,
             height: `${height}px`,
             overflow: "hidden",
+            transform: `scale(${scale})`,
             transformOrigin: "top left",
             fontFamily:
               "'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif",
+            color: "#000000",
+            backgroundColor: "transparent",
           }}
         >
           {/* Background image layer */}
