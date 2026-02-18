@@ -14,10 +14,10 @@ import {
 import { ImageUploader } from "@/components/image-uploader";
 import { CopyInput } from "@/components/copy-input";
 import { BIZBOARD_SPECS, COPY_RULES } from "@/lib/specs";
-import type { BizboardSubtype, GenerateResponse } from "@/types/ad";
+import type { BizboardSubtype, GenerateResponse, TextOverlayData } from "@/types/ad";
 
 interface BizboardFormProps {
-  onResult: (result: GenerateResponse) => void;
+  onResult: (result: GenerateResponse, textOverlay: TextOverlayData) => void;
 }
 
 const SUBTYPES: BizboardSubtype[] = [
@@ -76,7 +76,12 @@ export function BizboardForm({ onResult }: BizboardFormProps) {
       }
 
       const data: GenerateResponse = await res.json();
-      onResult(data);
+      onResult(data, {
+        mainCopy,
+        subCopy: subCopy || undefined,
+        badge: badge || undefined,
+        brandName: brandName || undefined,
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "생성에 실패했습니다.");
     } finally {

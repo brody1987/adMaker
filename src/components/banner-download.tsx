@@ -1,32 +1,67 @@
 "use client";
 
+import { useState } from "react";
+import html2canvas from "html2canvas";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface BannerDownloadProps {
-  imageBase64: string;
-  mimeType: string;
+  canvasRef: React.RefObject<HTMLDivElement | null>;
+  width: number;
+  height: number;
   filename: string;
+  format?: "png" | "jpg";
   className?: string;
 }
 
 export function BannerDownload({
-  imageBase64,
-  mimeType,
+  canvasRef,
+  width,
+  height,
   filename,
+  format = "png",
   className,
 }: BannerDownloadProps) {
-  const handleDownload = () => {
-    const src = imageBase64.startsWith("data:")
-      ? imageBase64
-      : `data:${mimeType};base64,${imageBase64}`;
+  const [isCapturing, setIsCapturing] = useState(false);
 
-    const link = document.createElement("a");
-    link.href = src;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleDownload = async () => {
+    const element = canvasRef.current;
+    if (!element) return;
+
+    setIsCapturing(true);
+    try {
+      const canvas = await html2canvas(element, {
+        width,
+        height,
+        scale: 1,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: null,
+      });
+
+      const mimeType = format === "jpg" ? "image/jpeg" : "image/png";
+      const quality = format === "jpg" ? 0.92 : undefined;
+
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) return;
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = filename;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+        },
+        mimeType,
+        quality
+      );
+    } catch (err) {
+      console.error("Banner capture failed:", err);
+    } finally {
+      setIsCapturing(false);
+    }
   };
 
   return (
@@ -34,8 +69,9 @@ export function BannerDownload({
       onClick={handleDownload}
       className={cn("w-full", className)}
       size="lg"
+      disabled={isCapturing}
     >
-      다운로드
+      {isCapturing ? "이미지 합성 중..." : "다운로드"}
     </Button>
   );
 }

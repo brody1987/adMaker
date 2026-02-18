@@ -16,10 +16,10 @@ import {
 import { ImageUploader } from "@/components/image-uploader";
 import { CopyInput } from "@/components/copy-input";
 import { DISPLAY_SPECS, COPY_RULES } from "@/lib/specs";
-import type { DisplayRatio, GenerateResponse } from "@/types/ad";
+import type { DisplayRatio, GenerateResponse, TextOverlayData } from "@/types/ad";
 
 interface DisplayFormProps {
-  onResult: (result: GenerateResponse) => void;
+  onResult: (result: GenerateResponse, textOverlay: TextOverlayData) => void;
 }
 
 export function DisplayForm({ onResult }: DisplayFormProps) {
@@ -68,7 +68,11 @@ export function DisplayForm({ onResult }: DisplayFormProps) {
       }
 
       const result: GenerateResponse = await res.json();
-      onResult(result);
+      onResult(result, {
+        mainCopy,
+        subCopy: subCopy || undefined,
+        brandName: brandName || undefined,
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "생성에 실패했습니다.");
     } finally {

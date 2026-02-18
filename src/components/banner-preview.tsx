@@ -1,16 +1,23 @@
 "use client";
 
+import { useRef } from "react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { BannerCanvas } from "@/components/banner-canvas";
+import type { AdType, TextOverlayData } from "@/types/ad";
 
 interface BannerPreviewProps {
-  imageBase64: string;
+  backgroundImage: string;
   mimeType: string;
   width: number;
   height: number;
   fileSizeKB: number;
   specCompliant: boolean;
   warnings: string[];
+  textOverlay: TextOverlayData;
+  adType: AdType;
+  subtype: string;
+  canvasRef?: React.RefObject<HTMLDivElement | null>;
   className?: string;
 }
 
@@ -21,19 +28,23 @@ interface SpecItem {
 }
 
 export function BannerPreview({
-  imageBase64,
+  backgroundImage,
   mimeType,
   width,
   height,
   fileSizeKB,
   specCompliant,
   warnings,
+  textOverlay,
+  adType,
+  subtype,
+  canvasRef,
   className,
 }: BannerPreviewProps) {
+  const internalRef = useRef<HTMLDivElement>(null);
+  const ref = canvasRef ?? internalRef;
+
   const format = mimeType.split("/")[1]?.toUpperCase() ?? "IMAGE";
-  const src = imageBase64.startsWith("data:")
-    ? imageBase64
-    : `data:${mimeType};base64,${imageBase64}`;
 
   const specs: SpecItem[] = [
     {
@@ -55,13 +66,31 @@ export function BannerPreview({
 
   return (
     <div className={cn("w-full space-y-3", className)}>
-      <div className="rounded-lg border bg-muted/30 p-3">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={src}
-          alt="생성된 배너"
-          className="w-full object-contain rounded max-h-64"
+      <div className="rounded-lg border bg-muted/30 p-3 overflow-hidden">
+        <BannerCanvas
+          ref={ref}
+          backgroundImage={backgroundImage}
+          mimeType={mimeType}
+          width={width}
+          height={height}
+          mainCopy={textOverlay.mainCopy}
+          subCopy={textOverlay.subCopy}
+          badge={textOverlay.badge}
+          brandName={textOverlay.brandName}
+          adType={adType}
+          subtype={subtype}
+          className="[&>div]:scale-[var(--preview-scale)] origin-top-left"
         />
+        <style>{`
+          .rounded-lg > div > div {
+            --preview-scale: 1;
+          }
+          @media (max-width: 768px) {
+            .rounded-lg > div > div {
+              --preview-scale: 0.5;
+            }
+          }
+        `}</style>
       </div>
 
       <div className="flex items-center gap-2 flex-wrap">

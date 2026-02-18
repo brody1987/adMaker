@@ -1,15 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DisplayForm } from "@/components/forms/display-form";
 import { BannerPreview } from "@/components/banner-preview";
 import { BannerDownload } from "@/components/banner-download";
-import type { GenerateResponse } from "@/types/ad";
+import type { GenerateResponse, TextOverlayData } from "@/types/ad";
 
 export default function DisplayPage() {
   const [result, setResult] = useState<GenerateResponse | null>(null);
+  const [textOverlay, setTextOverlay] = useState<TextOverlayData | null>(null);
+  const canvasRef = useRef<HTMLDivElement>(null);
+
+  const handleResult = (data: GenerateResponse, text: TextOverlayData) => {
+    setResult(data);
+    setTextOverlay(text);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -35,11 +42,11 @@ export default function DisplayPage() {
             <CardTitle>배너 정보 입력</CardTitle>
           </CardHeader>
           <CardContent>
-            <DisplayForm onResult={setResult} />
+            <DisplayForm onResult={handleResult} />
           </CardContent>
         </Card>
 
-        {result && (
+        {result && textOverlay && (
           <div className="mt-8 space-y-4">
             <Card>
               <CardHeader>
@@ -47,21 +54,27 @@ export default function DisplayPage() {
               </CardHeader>
               <CardContent>
                 <BannerPreview
-                  imageBase64={result.imageBase64}
+                  backgroundImage={result.backgroundImage}
                   mimeType={result.mimeType}
                   width={result.width}
                   height={result.height}
                   fileSizeKB={result.fileSizeKB}
                   specCompliant={result.specCompliant}
                   warnings={result.warnings}
+                  textOverlay={textOverlay}
+                  adType="display"
+                  subtype={result.width === 1200 ? "2:1" : result.width === result.height ? "1:1" : result.width < result.height ? "9:16" : "4:5"}
+                  canvasRef={canvasRef}
                 />
               </CardContent>
             </Card>
 
             <BannerDownload
-              imageBase64={result.imageBase64}
-              mimeType={result.mimeType}
+              canvasRef={canvasRef}
+              width={result.width}
+              height={result.height}
               filename={`display-banner.${result.mimeType.split("/")[1]}`}
+              format={result.mimeType.includes("jpeg") || result.mimeType.includes("jpg") ? "jpg" : "png"}
             />
           </div>
         )}

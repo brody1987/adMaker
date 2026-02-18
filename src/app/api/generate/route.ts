@@ -152,7 +152,7 @@ export async function POST(request: NextRequest) {
     }
 
     const response: GenerateResponse = {
-      imageBase64: outputDataUrl,
+      backgroundImage: outputDataUrl,
       mimeType: outputMimeType,
       width: spec.width,
       height: spec.height,

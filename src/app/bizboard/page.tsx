@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import {
   Card,
@@ -12,10 +12,17 @@ import {
 import { BizboardForm } from "@/components/forms/bizboard-form";
 import { BannerPreview } from "@/components/banner-preview";
 import { BannerDownload } from "@/components/banner-download";
-import type { GenerateResponse } from "@/types/ad";
+import type { GenerateResponse, TextOverlayData } from "@/types/ad";
 
 export default function BizboardPage() {
   const [result, setResult] = useState<GenerateResponse | null>(null);
+  const [textOverlay, setTextOverlay] = useState<TextOverlayData | null>(null);
+  const canvasRef = useRef<HTMLDivElement>(null);
+
+  const handleResult = (data: GenerateResponse, text: TextOverlayData) => {
+    setResult(data);
+    setTextOverlay(text);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -44,12 +51,12 @@ export default function BizboardPage() {
             <CardDescription>유형을 선택하고 이미지와 카피를 입력하세요.</CardDescription>
           </CardHeader>
           <CardContent>
-            <BizboardForm onResult={setResult} />
+            <BizboardForm onResult={handleResult} />
           </CardContent>
         </Card>
 
         {/* 결과 */}
-        {result && (
+        {result && textOverlay && (
           <div className="mt-6 space-y-4">
             <Card>
               <CardHeader>
@@ -58,18 +65,24 @@ export default function BizboardPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <BannerPreview
-                  imageBase64={result.imageBase64}
+                  backgroundImage={result.backgroundImage}
                   mimeType={result.mimeType}
                   width={result.width}
                   height={result.height}
                   fileSizeKB={result.fileSizeKB}
                   specCompliant={result.specCompliant}
                   warnings={result.warnings}
+                  textOverlay={textOverlay}
+                  adType="bizboard"
+                  subtype="object"
+                  canvasRef={canvasRef}
                 />
                 <BannerDownload
-                  imageBase64={result.imageBase64}
-                  mimeType={result.mimeType}
+                  canvasRef={canvasRef}
+                  width={result.width}
+                  height={result.height}
                   filename={`bizboard-banner.${result.mimeType.split("/")[1] ?? "png"}`}
+                  format={result.mimeType.includes("jpeg") || result.mimeType.includes("jpg") ? "jpg" : "png"}
                 />
               </CardContent>
             </Card>

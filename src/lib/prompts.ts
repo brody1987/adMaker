@@ -67,29 +67,32 @@ export function buildGeneratePrompt(params: {
     specInfo = `사이즈: ${width}x${height}px`;
   }
 
-  return `Create a professional Korean advertising banner image with these specifications:
+  return `Create a professional advertising banner BACKGROUND image with these specifications:
 
 Size: ${width}x${height} pixels
 Type: ${adType} (${subtype})
 Spec: ${specInfo}
 
-Main Copy (Korean text to include): "${mainCopy}"
-${subCopy ? `Sub Copy: "${subCopy}"` : ""}
-${badge ? `Badge: "${badge}"` : ""}
-${brandName ? `Brand: "${brandName}"` : ""}
-
 Product Analysis:
 ${analysisResult}
 
+CRITICAL — TEXT RULES:
+- Do NOT render ANY text, letters, numbers, characters, or typography in the image
+- Do NOT include any copy, headlines, sub-headlines, badges, brand names, or labels
+- The image must be COMPLETELY free of any written content
+- Leave clean space (solid color, gradient, or subtle pattern) in the area where text would typically appear
+- ${adType === "bizboard" ? "Reserve the LEFT 60% of the banner as a clean area for text overlay" : ""}
+- ${adType === "display" ? "Reserve the top or left portion as a clean area for text overlay" : ""}
+- ${adType === "message" ? "Reserve the upper portion as a clean area for text overlay" : ""}
+
 Design Requirements:
-- Clean, professional Korean advertising style
-- Product should be prominently featured
-- Text should be clearly readable with proper hierarchy
-- Use colors that complement the product
+- Clean, professional advertising background style
+- Product should be prominently featured and faithful to the original product image
+- Use colors and gradients that complement the product
 - Follow Kakao Moment ad guidelines
-- ${adType === "bizboard" ? "Horizontal banner layout, product on the right side" : ""}
-- ${adType === "display" ? "Eye-catching display ad with balanced composition" : ""}
-- ${adType === "message" ? "Message-style ad optimized for mobile viewing" : ""}
+- ${adType === "bizboard" ? "Horizontal banner layout, product on the RIGHT side, clean background on the LEFT for text" : ""}
+- ${adType === "display" ? "Eye-catching display ad background with balanced composition, product prominently placed" : ""}
+- ${adType === "message" ? "Message-style ad background optimized for mobile viewing, product clearly visible" : ""}
 - Do NOT include any watermarks or AI attribution
-- Korean text must be accurate and properly rendered`;
+- Focus on beautiful background design and accurate product placement only`;
 }

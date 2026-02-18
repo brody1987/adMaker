@@ -1,13 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { MessageForm } from "@/components/forms/message-form";
 import { BannerPreview } from "@/components/banner-preview";
 import { BannerDownload } from "@/components/banner-download";
-import type { GenerateResponse } from "@/types/ad";
+import type { GenerateResponse, TextOverlayData } from "@/types/ad";
 
 export default function MessagePage() {
   const [result, setResult] = useState<GenerateResponse | null>(null);
+  const [textOverlay, setTextOverlay] = useState<TextOverlayData | null>(null);
+  const canvasRef = useRef<HTMLDivElement>(null);
+
+  const handleResult = (data: GenerateResponse, text: TextOverlayData) => {
+    setResult(data);
+    setTextOverlay(text);
+  };
 
   return (
     <div className="space-y-8">
@@ -21,26 +28,32 @@ export default function MessagePage() {
 
       <div className="grid gap-8 lg:grid-cols-2">
         <div>
-          <MessageForm onResult={setResult} />
+          <MessageForm onResult={handleResult} />
         </div>
 
         <div className="space-y-4">
-          {result ? (
+          {result && textOverlay ? (
             <>
               <h2 className="text-lg font-semibold">미리보기</h2>
               <BannerPreview
-                imageBase64={result.imageBase64}
+                backgroundImage={result.backgroundImage}
                 mimeType={result.mimeType}
                 width={result.width}
                 height={result.height}
                 fileSizeKB={result.fileSizeKB}
                 specCompliant={result.specCompliant}
                 warnings={result.warnings}
+                textOverlay={textOverlay}
+                adType="message"
+                subtype="wide-image"
+                canvasRef={canvasRef}
               />
               <BannerDownload
-                imageBase64={result.imageBase64}
-                mimeType={result.mimeType}
+                canvasRef={canvasRef}
+                width={result.width}
+                height={result.height}
                 filename={`message-banner.${result.mimeType.split("/")[1] ?? "png"}`}
+                format={result.mimeType.includes("jpeg") || result.mimeType.includes("jpg") ? "jpg" : "png"}
               />
             </>
           ) : (

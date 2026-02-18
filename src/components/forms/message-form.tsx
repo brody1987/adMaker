@@ -16,10 +16,10 @@ import {
 import { ImageUploader } from "@/components/image-uploader";
 import { CopyInput } from "@/components/copy-input";
 import { MESSAGE_SPECS, COPY_RULES } from "@/lib/specs";
-import type { MessageSubtype, GenerateResponse } from "@/types/ad";
+import type { MessageSubtype, GenerateResponse, TextOverlayData } from "@/types/ad";
 
 interface MessageFormProps {
-  onResult: (result: GenerateResponse) => void;
+  onResult: (result: GenerateResponse, textOverlay: TextOverlayData) => void;
 }
 
 const SUBTYPES: { value: MessageSubtype; label: string }[] = [
@@ -86,7 +86,10 @@ export function MessageForm({ onResult }: MessageFormProps) {
       }
 
       const result: GenerateResponse = await res.json();
-      onResult(result);
+      onResult(result, {
+        mainCopy,
+        subCopy: subCopy || undefined,
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "생성 중 오류가 발생했습니다.");
     } finally {

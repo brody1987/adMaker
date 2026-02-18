@@ -59,13 +59,20 @@ export interface GenerateRequest {
 }
 
 export interface GenerateResponse {
-  imageBase64: string;
+  backgroundImage: string;
   mimeType: string;
   width: number;
   height: number;
   fileSizeKB: number;
   specCompliant: boolean;
   warnings: string[];
+}
+
+export interface TextOverlayData {
+  mainCopy: string;
+  subCopy?: string;
+  badge?: string;
+  brandName?: string;
 }
 
 export interface AnalyzeRequest {
